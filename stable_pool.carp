@@ -6,6 +6,8 @@
 (use Array)
 (use Maybe)
 
+(definterface count (Fn [a] Int))
+
 (doc Slot "represents a single storage cell in a StablePool. 
 It tracks its current generation and an optional value.")
 (deftype (Slot a) [
