@@ -137,7 +137,10 @@ Does nothing if the handle is stale, null, or out of bounds. $O(1)$ complexity."
   (doc get-ptr "returns a pointer to the element wrapped in a Maybe. 
 Returns Nothing if the handle is stale or invalid.
 ### Safety
-The returned pointer may be invalidated if the pool grows or is cleared.")
+The returned pointer is only valid as long as:
+1. The handle remains valid (the object has not been freed or reused).
+2. The pool has not grown (reallocated its internal buffer).
+3. The pool has not been cleared.")
   (defn get-ptr [p h]
     (let [idx (Long.to-int (Uint64.to-long (Handle.index h)))
           slots (StablePool.slots p)]
@@ -147,6 +150,13 @@ The returned pointer may be invalidated if the pool grows or is cleared.")
           (if (and (Maybe.just? (Slot.data slot)) (Uint32.= @(Slot.gen slot) (Handle.generation h)))
             (Maybe.Just (Maybe.unsafe-ptr (Slot.data slot)))
             (Maybe.Nothing))))))
+
+  (doc with-ptr "executes a function f with a pointer to the pooled element.
+The function is only called if the handle h is currently valid.")
+  (defn with-ptr [p h f]
+    (match (StablePool.get-ptr p h)
+      (Maybe.Just ptr) (~f ptr)
+      (Maybe.Nothing) ()))
 
   (doc valid? "checks if a handle is currently valid (refers to an alive object).")
   (defn valid? [p h]
