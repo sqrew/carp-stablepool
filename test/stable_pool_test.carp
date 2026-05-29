@@ -5,6 +5,7 @@
 (use Handle)
 (use Maybe)
 (use Uint64)
+(use Uint32)
 
 (deftest stable-pool-test
   (let [p (the (StablePool Int) (StablePool.new))
@@ -28,7 +29,7 @@
           (let [h2 (the (Handle Int) (StablePool.alloc! &p 200))]
             (do
               (set! state (assert-true &state (Uint64.= (Handle.index &h1) (Handle.index &h2)) "Slot index reused"))
-              (set! state (assert-true &state (Uint64.> (Handle.generation &h2) (Handle.generation &h1)) "Generation bumped after reuse"))
+              (set! state (assert-true &state (Uint32.> (Handle.generation &h2) (Handle.generation &h1)) "Generation bumped after reuse"))
               (set! state (assert-true &state (Maybe.= &(Maybe.Just 200) &(StablePool.get &p &h2)) "New handle returns correct value"))))
           
           ;; Growth
