@@ -32,21 +32,10 @@ Add this to your project by loading `stable_pool.carp`.
 (use StablePool)
 ```
 
-## Usage
 
-```clojure
-(use StablePool)
+## Examples
 
-(let [pool (StablePool.new)]
-  (do
-    (let [h (StablePool.alloc! &pool @"bullet")]
-      (do
-        (IO.println &(str (StablePool.get &pool &h))) ; (Just "bullet")
-        (StablePool.free! &pool &h)
-        (IO.println &(str (StablePool.get &pool &h))))) ; Nothing
-    ))
-```
-
+See [examples.md](examples.md) for usage examples.
 ## Running Tests
 
 ```bash
